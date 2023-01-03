@@ -1,0 +1,89 @@
+{ pkgs
+, lib
+, config
+, modulesPath
+, ...
+}:
+
+let
+  httpsPort = 8443;
+in {
+  imports = [
+    "${toString modulesPath}/virtualisation/qemu-vm.nix"
+    # ./module.nix
+    (builtins.fetchurl {
+      url = "https://git.clerie.de/clerie/nixfiles/raw/commit/64122a7149169f225a6c9e5a0840b1228148de10/modules/akne/default.nix";
+      sha256 = "17l7q0vjzb5586dqf9dlcg8zmvx7xaihbghyh6w2y3apbdycr3kh";
+    })
+  ];
+  system.stateVersion = "23.05";
+  environment.systemPackages = with pkgs; [
+    bat
+    fd
+    tree
+    vim
+  ];
+
+  virtualisation = {
+    memorySize = 2048;
+    diskSize = 2048;
+    graphics = false;
+    writableStore = false;
+    forwardPorts = [
+      {
+        from = "host";
+        host.port = 8080;
+        guest.port = 80;
+      }
+      {
+        from = "host";
+        host.port = httpsPort;
+        guest.port = 443;
+      }
+      {
+        from = "host";
+        host.port = 2222;
+        guest.port =  22;
+      }
+    ];
+  };
+
+  # That way we can preview our part of the options manual
+  documentation.nixos.includeAllModules = false;
+  networking.firewall.enable = false;
+  users.users.root.password = "root";
+  services.openssh = {
+    enable = true;
+    permitRootLogin = "yes";
+  };
+
+  time.timeZone = "Europe/Berlin";
+
+  clerie.akne = {
+    enable = true;
+    selfSignedOnlyHostNames = [ "freescout.local" ];
+  };
+  security.acme = {
+    acceptTerms = true;
+    defaults.email = "dummy@dummymail.io";
+  };
+  services.nginx.enableReload = true;
+  services.freescout = rec {
+    enable = true;
+    settings = {
+      APP_ENV = "local";
+      APP_DEBUG = true;
+      APP_KEY = "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
+      APP_URL = "https://${domain}:${toString httpsPort}";
+    };
+    databaseSetup = {
+      enable = true;
+      # kind = "mysql";
+    };
+    domain = "freescout.local";
+    nginx = {
+      forceSSL = true;
+      enableACME = true;
+    };
+  };
+}
