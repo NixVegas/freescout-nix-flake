@@ -70,11 +70,23 @@ in {
   services.nginx.enableReload = true;
   services.freescout = rec {
     enable = true;
+    /* package = pkgs.freescout.overrideAttrs (oldAttrs: rec {
+      version = "1.7.15";
+      src = pkgs.fetchFromGitHub {
+        owner = "freescout-helpdesk";
+        repo = oldAttrs.pname;
+        rev = version;
+        # hash = "sha256-4izKWWjHxa9I3NtAQbXUcyWTbCWCvLi9pZejm6wRuzc=";
+        hash = "sha256-agRfiEU9NpNvHOEbabr5IkrNJ5mC7jfoPPjXRUUSGqo=";
+      };
+    });
+    phpPackage = pkgs.php80; */
     settings = {
       APP_ENV = "local";
       APP_DEBUG = true;
       APP_KEY = "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
       APP_URL = "https://${domain}:${toString httpsPort}";
+      APP_DISABLE_UPDATING = false;
     };
     databaseSetup = {
       enable = true;

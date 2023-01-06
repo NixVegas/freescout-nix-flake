@@ -38,8 +38,8 @@ let
 
   raw_config = rec {
       APP_ENV = "production";
-      APP_FORCE_HTTPS = config.services.nginx.virtualHosts.${cfg.domain} ? "sslCertificate";
-      APP_URL = "http${optionalString APP_FORCE_HTTPS "s"}://${cfg.domain}";
+      APP_FORCE_HTTPS = true;
+      APP_URL = "https://${cfg.domain}";
       APP_TIMEZONE = config.time.timeZone;
       APP_DISABLE_UPDATING = true;
     }
@@ -117,8 +117,8 @@ let
   '';
 
   # Helper functions
-  isSecret = v: isAttrs v && v ? _secret && isString v._secret;
-  hashSecret = hashString "sha256";
+  isSecret = v: isAttrs v && v ? _secret && (isString v._secret || builtins.isPath v._secret);
+  hashSecret = p: builtins.hashString "sha256" (toString p);
   # hasSecrets = (isList allSecrets && allSecrets != [ ]) or (allSecrets == null);
   dropNull = filterAttrsRecursive (
     n: v: ! elem v [ null [] {} ]
@@ -130,7 +130,7 @@ let
       else if isString v then v
       else if isBool   v then boolToString v
       else if isSecret v then hashSecret v._secret
-      else th row "unsupported type ${typeOf v}: ${(lib.generators.toPretty {}) v}";
+      else throw "unsupported type ${typeOf v}: ${(lib.generators.toPretty {}) v}";
     };
   };
   mkEnvFile = fname: values: pkgs.writeText fname (mkEnvVars values);
@@ -170,8 +170,8 @@ in {
       defaultText = lib.literalExpression ''
         rec {
           APP_ENV = "production";
-          APP_FORCE_HTTPS = config.services.nginx.virtualHosts.''${cfg.domain} ? "sslCertificate";
-          APP_URL = "http''${optionalString APP_FORCE_HTTPS "s"}://''${cfg.domain}";
+          APP_FORCE_HTTPS = true;
+          APP_URL = "https://''${cfg.domain}";
           APP_TIMEZONE = config.time.timeZone;
           APP_DISABLE_UPDATING = true;
         }
@@ -254,6 +254,7 @@ in {
       isSystemUser = true;
       createHome = true;
       home = datadir;
+      homeMode = "750";
     };
     users.users.${config.services.nginx.user}.extraGroups = [ group ];
     users.groups.${group} = {};

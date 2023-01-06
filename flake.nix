@@ -20,6 +20,10 @@
       };
     in {
       packages.freescout = pkgs.freescout;
+      packages.tests = import ./tests.nix {
+        inherit pkgs system;
+        outputs = self;
+      };
       packages.test-vm = (nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         modules = [
