@@ -7,6 +7,7 @@
 
 let
   httpsPort = 8443;
+  keyFile = pkgs.writeText "freescout-app-key" "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
 in {
   imports = [
     "${toString modulesPath}/virtualisation/qemu-vm.nix"
@@ -68,6 +69,7 @@ in {
     defaults.email = "dummy@dummymail.io";
   };
   services.nginx.enableReload = true;
+
   services.freescout = rec {
     enable = true;
     /* package = pkgs.freescout.overrideAttrs (oldAttrs: rec {
@@ -84,7 +86,7 @@ in {
     settings = {
       APP_ENV = "local";
       APP_DEBUG = true;
-      APP_KEY = "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
+      APP_KEY._secret = toString keyFile;
       APP_URL = "https://${domain}:${toString httpsPort}";
       APP_DISABLE_UPDATING = false;
     };

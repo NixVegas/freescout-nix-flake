@@ -1,6 +1,7 @@
 { pkgs
 , system ? "x86_64-linux"
 , outputs
+, lib
 , ...
 }:
 
@@ -19,6 +20,8 @@ let
     I am just a test E-Mail to see if freescout is (somewhat) working.
     MAIL
   '';
+
+  keyFile = pkgs.writeText "freescout-app-key" "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
 
   baseTestNode = { config, pkgs, ... }: {
       virtualisation.memorySize = 2048;
@@ -68,11 +71,9 @@ let
         enable = true;
         domain = freescoutDomain;
         settings = {
-          # APP_KEY = ./APP_KEY.txt;
-          APP_KEY = "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
+          APP_KEY._secret = toString keyFile;
           APP_FORCE_HTTPS = false;
           APP_URL = "http://${freescoutDomain}:8888";
-          # APP_KEY._secret = toString ./APP_KEY.txt;
         };
       };
   };

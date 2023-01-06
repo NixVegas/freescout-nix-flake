@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchFromGitHub
+, nixosTests
 }:
 stdenv.mkDerivation rec {
   pname = "freescout";
