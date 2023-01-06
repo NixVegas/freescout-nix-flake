@@ -67,8 +67,9 @@ let
       error_reporting = E_ALL ^ E_DEPRECATED
     '';
   };
-  package = cfg.package.overrideAttrs (oldAttrs: {
-    postInstall = oldAttrs.postInstall or "" + ''
+  package = cfg.package.overrideAttrs (prev: {
+    pname = "${prev.pname}-${cfg.domain}";
+    postInstall = prev.postInstall or "" + ''
       ln -s ${datadir} $out/share/freescout/data
     '';
   });
@@ -399,6 +400,14 @@ in {
           "/" = {
             index = "index.php";
             tryFiles = "$uri $uri/ /index.php$is_args$args";
+
+            extraConfig = ''
+              # Defeats E-Mail open tracking or possibly "real" exploits
+              add_header X-XSS-Protection "1; mode=block" always;
+              add_header X-Content-Type-Options "nosniff" always;
+              add_header Referrer-Policy "no-referrer-when-downgrade" always;
+              add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'";
+            '';
           };
 
           "~ \.php$" = {
@@ -409,6 +418,12 @@ in {
               fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
               fastcgi_pass unix:${config.services.phpfpm.pools.${user}.socket};
               ${optSsl}
+
+              # Defeats E-Mail open tracking or possibly "real" exploits
+              add_header X-XSS-Protection "1; mode=block" always;
+              add_header X-Content-Type-Options "nosniff" always;
+              add_header Referrer-Policy "no-referrer-when-downgrade" always;
+              add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'";
             '';
           };
 
@@ -424,6 +439,11 @@ in {
             expires 2d;
             access_log off;
             add_header Cache-Control "public, must-revalidate";
+            # Defeats E-Mail open tracking or possibly "real" exploits
+            add_header X-XSS-Protection "1; mode=block" always;
+            add_header X-Content-Type-Options "nosniff" always;
+            add_header Referrer-Policy "no-referrer-when-downgrade" always;
+            add_header Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'";
           '';
 
           "~* ^/(?:css|fonts|img|installer|js|modules)$".extraConfig = ''

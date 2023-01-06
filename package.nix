@@ -19,7 +19,10 @@ stdenv.mkDerivation rec {
   ];
 
   prePatch = ''
-    rm -r storage bootstrap/cache public/{css,js}/builds
+    rm -rf storage
+    rm bootstrap/cache/.gitignore
+    rm public/{css,js}/builds/.htaccess
+    rmdir bootstrap/cache public/{css,js}/builds
     ln -rs data/.env .env
     ln -rs data/storage storage
     ln -rs data/bootstrap/cache bootstrap/cache
