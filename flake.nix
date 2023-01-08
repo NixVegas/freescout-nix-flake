@@ -18,8 +18,9 @@
           self.overlays.default
         ];
       };
-    in {
+    in rec {
       packages.freescout = pkgs.freescout;
+      packages.default = packages.freescout;
       packages.nixosTests.freescout = pkgs.nixosTests.freescout;
       packages.dev-vm = (nixpkgs.lib.nixosSystem {
         inherit system pkgs;
