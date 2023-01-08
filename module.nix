@@ -380,13 +380,15 @@ in {
     systemd.services."freescout-queue" = recursiveUpdate baseService {
       script = "artisan queue:work --queue emails,default --sleep=1800 -vvv --tries=20 2>&1 | tee -a ${datadir}/storage/logs/queue-jobs.log";
       serviceConfig = {
-        Restart = "always";
+        #Restart = "always";
         RestartDelaySec = "10s";
         # The schedule:run restarts this every hour (from what I've read on laravel this could be beneficial for resource usage)
         RuntimeMaxSec = "1h";
       };
       wantedBy = [ "multi-user.target" ];
       after = [ "freescout-setup.service" ] ++ dbService;
+      # This restarts very frequently so having this as a timer seems sensible
+      startAt = "minutely";
     };
 
     services.nginx = {
