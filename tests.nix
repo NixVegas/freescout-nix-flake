@@ -35,7 +35,7 @@ let
         jq
       ];
 
-      networking.firewall.allowedTCPPorts = [ 80 ];
+      networking.firewall.allowedTCPPorts = [ 80 8025 ];
       networking.extraHosts = ''
         127.0.0.1 ${mailDomain} ${freescoutDomain}
       '';
@@ -144,7 +144,7 @@ in pkgs.nixosTest {
       #machine.wait_until_fails("curl -sSf --cookie-jar cjar --cookie cjar 'http://${freescoutDomain}/mailbox/1' | grep 'There are no conversations here'", timeout=180)
       machine.wait_until_succeeds("curl -sSf --cookie-jar cjar --cookie cjar 'http://${freescoutDomain}/mailbox/1' | grep 'Hello NixOS'", timeout=180)
       # Notifactions to users are being sent
-      machine.wait_until_succeeds("test $(curl -sSf http://127.0.0.1:8025/api/v2/messages | jq '.total') -eq 1")
+      machine.wait_until_succeeds("test $(curl -sSf http://127.0.0.1:8025/api/v2/messages | jq '.total') -eq 1", timeout=180)
       machine.succeed("curl -sSf http://127.0.0.1:8025/api/v2/messages | jq '.items[].Content.Headers[\"X-FreeScout-Mail-Type\"] | .[0]'")
 
     with subtest("Ensure vars are being generated"):
