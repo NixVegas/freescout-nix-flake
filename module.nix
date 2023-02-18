@@ -110,7 +110,7 @@ let
     set -x
     umask 027
     # Working arround https://github.com/freescout-helpdesk/freescout/issues/2547
-    rm -f ${datadir}/bootstrap/cache.php
+    rm -f ${datadir}/bootstrap/cache.php ${datadir}/bootstrap/cache/config.php
     ln -sf "${artisanWrapped}/bin/artisan" "${datadir}/artisan"
     ${concatMapStringsSep "\n" (p: "mkdir -p ${datadir}/${p}") rwPaths}
 
