@@ -4,14 +4,15 @@
 , nixosTests
 }:
 stdenv.mkDerivation rec {
+  preferLocalBuild = true;
   pname = "freescout";
-  version = "1.8.47";
+  version = "1.8.60";
 
   src = fetchFromGitHub {
     owner = "freescout-helpdesk";
     repo = pname;
     rev = version;
-    hash = "sha256-zivvsWSAcLdLjIKncAsWF1ADICxDkfrlw8bDCh55HFM=";
+    hash = "sha256-x9ZU3ez9mEe5XEe4UyTmKA9OElYlD/Q7nmrRjWJcs6Q=";
   };
 
   patches = [

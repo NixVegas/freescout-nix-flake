@@ -332,55 +332,14 @@ in {
     # (I may or may not be salty)
     #####
 
-    systemd.services."freescout-queue-flush" = baseService // {
-      startAt = "weekly";
-      script = "artisan queue:flush";
-    };
-    # Would originally start hourly
-    systemd.services."freescout-foldercounters" =  baseService // {
-      startAt = "*:00/15:00";
-      script = "artisan freescout:update-folder-counters";
-    };
-    systemd.services."freescout-fetch-monitor" = baseService // {
-      startAt = "05:00/15:00";
-      script = "artisan freescout:fetch-monitor";
-    };
-    systemd.services."freescout-check-conv-viewers" = baseService // {
-      startAt = "minutely"; # Why the hell does this have to run at all and then minutely?!
-      script = "artisan freescout:check-conv-viewers";
-    };
-    systemd.services."freescout-send-log" = baseService // {
-      startAt = "monthly";
-      script = "artisan freescout:clean-send-log";
-    };
-
-    # Even trying to stay in line with the projects behaviour when it comes
-    # to respecting the users configuration \o/
-    systemd.services."freescout-alert-log" = let
-      period = app_config.APP_ALERT_LOGS_PERIOD or "week";
-      startAt =
-        if period == "hour" then "hourly"
-        else if period == "day" then "daily"
-        else if period == "week" then "weekly"
-        else if period == "month" then "monthly"
-        else abort "Unable to interpret `services.freescout.settings.APP_ALERT_LOGS_PERIOD`. Must be one of `hour`, `day`, `week`, `month`";
-    in mkIf (app_config.APP_ALERT_LOGS or false) baseService // {
-      inherit startAt;
-      script = "artisan freescout:logs-monitor";
-    };
-
-    systemd.services."freescout-fetch-emails" = let
-      everyNMinutes = app_config.APP_FETCH_SCHEDULE or 1;
-    in baseService // {
-      # Will break above 60 minutes (1 hour) I fear, but freescout itself
-      # also won't alow a interval of greater than 1 hour so ¯\_(ツ)_/¯
-      startAt = "*:00/${toString everyNMinutes}:00";
-      script = "artisan freescout:fetch-emails 2>&1 | tee -a ${datadir}/storage/logs/fetch-emails.log";
+    systemd.services."freescout-schedule-run" = baseService // {
+      startAt = "minutely";
+      script = "artisan schedule:run --no-interaction";
     };
 
     # May I introduce the source of this whole mess (also known as the previous 7 systed timers)
     systemd.services."freescout-queue" = recursiveUpdate baseService {
-      script = "artisan queue:work --queue emails,default --sleep=1800 -vvv --tries=20 2>&1 | tee -a ${datadir}/storage/logs/queue-jobs.log";
+      script = "artisan queue:work --queue emails,default --sleep=5 -vv --tries=20 | tee -a ${datadir}/storage/logs/queue-jobs.log";
       serviceConfig = {
         #Restart = "always";
         RestartDelaySec = "10s";
