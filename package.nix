@@ -6,13 +6,13 @@
 stdenv.mkDerivation rec {
   preferLocalBuild = true;
   pname = "freescout";
-  version = "1.8.60";
+  version = "1.8.70";
 
   src = fetchFromGitHub {
     owner = "freescout-helpdesk";
     repo = pname;
     rev = version;
-    hash = "sha256-x9ZU3ez9mEe5XEe4UyTmKA9OElYlD/Q7nmrRjWJcs6Q=";
+    hash = "sha256-cxYy3zaOhpZQFD2Qj9RTG86rgIAy4rb4f0Du1rcFd5Y=";
   };
 
   patches = [
@@ -41,12 +41,15 @@ stdenv.mkDerivation rec {
 
     runHook postInstall
   '';
+  passthru.tests = {
+    inherit (nixosTests) freescout;
+  };
 
   meta = with lib; {
     description = "Free self-hosted help desk & shared mailbox";
     license = licenses.agpl3Only;
     homepage = "https://freescout.net/";
     platforms = platforms.all;
-    # maintainers = with maintainers; [ e1mo ];
+    maintainers = with maintainers; [ e1mo ];
   };
 }
