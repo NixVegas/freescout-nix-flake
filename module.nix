@@ -322,34 +322,20 @@ in {
       };
     };
 
-    #####
-    # All of those timers were extract from the PHP source code of the schedule:run command.
-    # Running only this command in a systemd service is sadly not possible, since this command
-    # will start a long running queue:work command (which can't be turned off) but still expect
-    # all of the other commands being run every minute / whatever.
-    # That's why I extracted all commands and their timings (I made changes to a few timings) from
-    # the schedle function in app/Console/Kernel.php and manually build systemd timers for themm...
-    # (I may or may not be salty)
-    #####
-
     systemd.services."freescout-schedule-run" = baseService // {
       startAt = "minutely";
       script = "artisan schedule:run --no-interaction";
     };
 
-    # May I introduce the source of this whole mess (also known as the previous 7 systed timers)
     systemd.services."freescout-queue" = recursiveUpdate baseService {
       script = "artisan queue:work --queue emails,default --sleep=5 -vv --tries=20 | tee -a ${datadir}/storage/logs/queue-jobs.log";
       serviceConfig = {
-        #Restart = "always";
-        RestartDelaySec = "10s";
-        # The schedule:run restarts this every hour (from what I've read on laravel this could be beneficial for resource usage)
+        RestartSec = "15s";
         RuntimeMaxSec = "1h";
+        Restart = "always";
       };
       wantedBy = [ "multi-user.target" ];
       after = [ "freescout-setup.service" ] ++ dbService;
-      # This restarts very frequently so having this as a timer seems sensible
-      startAt = "minutely";
     };
 
     services.nginx = {
