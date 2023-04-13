@@ -146,7 +146,7 @@ in {
 
     phpPackage = mkOption {
       type = types.package;
-      default = pkgs.php;
+      default = pkgs.php82;
       description = lib.mdDoc "The php package to use";
       defaultText = literalExpression "pkgs.php";
       relatedPackages = [ "php80" "php81" "php82" ];

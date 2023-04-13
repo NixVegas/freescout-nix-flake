@@ -1,0 +1,13 @@
+diff --git a/vendor/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php b/vendor/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php
+index 6014c596..08e2d2a0 100644
+--- a/vendor/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php
++++ b/vendor/doctrine/dbal/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php
+@@ -864,7 +864,7 @@ SQL
+             return $callback(true);
+         }
+ 
+-        throw new UnexpectedValueException("Unrecognized boolean literal '${value}'");
++        throw new UnexpectedValueException("Unrecognized boolean literal '{$value}'");
+     }
+ 
+     /**

@@ -17,6 +17,7 @@ stdenv.mkDerivation rec {
 
   patches = [
     ./0001-Fix-settings-page-error-due-to-unwritable-.env-file.patch
+    ./deprecated-var-usage.patch
   ];
 
   prePatch = ''

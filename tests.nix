@@ -24,7 +24,7 @@ let
   keyFile = pkgs.writeText "freescout-app-key" "base64:J8ZgK5LZkhVKpmZvjjA700sNL7+Y6aQTus8ZnUNNAaE=";
 
   baseTestNode = { config, pkgs, ... }: {
-      virtualisation.memorySize = 2048;
+      virtualisation.memorySize = 1024;
       imports = [
         outputs.nixosModules.freescout
       ];
@@ -77,28 +77,28 @@ let
         };
       };
   };
+
+  mkNode = dbType: phpVersion: { config, pkgs, ... }: {
+    imports = [
+      baseTestNode
+    ];
+    services.freescout.phpPackage = pkgs.${phpVersion};
+    services.freescout.databaseSetup = {
+      enable = true;
+      kind = dbType;
+    };
+  };
 in pkgs.nixosTest {
   name = "freescout";
 
   nodes = {
-    freescout_pgsql = { config, pkgs, ... }: {
-      imports = [
-        baseTestNode
-      ];
-      services.freescout.databaseSetup = {
-        enable = true;
-        kind = "pgsql";
-      };
-    };
-    freescout_mysql = { config, pkgs, ... }: {
-      imports = [
-        baseTestNode
-      ];
-      services.freescout.databaseSetup = {
-        enable = true;
-        kind = "mysql";
-      };
-    };
+    freescout_pgsql_php80 = mkNode "pgsql" "php80";
+    freescout_pgsql_php81 = mkNode "pgsql" "php81";
+    freescout_pgsql_php82 = mkNode "pgsql" "php82";
+
+    freescout_mysql_php80 = mkNode "mysql" "php80";
+    freescout_mysql_php81 = mkNode "mysql" "php81";
+    freescout_mysql_php82 = mkNode "mysql" "php82";
   };
 
   testScript = ''
@@ -106,10 +106,13 @@ in pkgs.nixosTest {
 
   start_all()
 
-  freescout_pgsql.wait_for_unit("postgresql")
-  freescout_mysql.wait_for_unit("mysql")
+  for machine in [freescout_pgsql_php80, freescout_pgsql_php81, freescout_pgsql_php82]:
+    machine.wait_for_unit("postgresql")
 
-  for machine in [freescout_pgsql, freescout_mysql]:
+  for machine in [freescout_mysql_php80, freescout_mysql_php81, freescout_mysql_php82]:
+    machine.wait_for_unit("mysql")
+
+  for machine in [freescout_pgsql_php80, freescout_pgsql_php81, freescout_pgsql_php82, freescout_mysql_php80, freescout_mysql_php81, freescout_mysql_php82]:
     machine.wait_for_unit("nginx")
     machine.wait_for_unit("dovecot2")
     machine.wait_for_unit("mailhog")
