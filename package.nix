@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
     owner = "freescout-helpdesk";
     repo = pname;
     rev = version;
-    hash = "sha256-LAJrflozKomHdI7VCn5ED4Aq6Oz/yT7AGGUVyKnLbDA=";
+    hash = "sha256-iPvbDUIgeRvsZ7QRoBnhIGRAnV8MhiZuM96OrCxut9A=";
   };
 
   patches = [
