@@ -92,11 +92,9 @@ in pkgs.nixosTest {
   name = "freescout";
 
   nodes = {
-    freescout_pgsql_php80 = mkNode "pgsql" "php80";
     freescout_pgsql_php81 = mkNode "pgsql" "php81";
     freescout_pgsql_php82 = mkNode "pgsql" "php82";
 
-    freescout_mysql_php80 = mkNode "mysql" "php80";
     freescout_mysql_php81 = mkNode "mysql" "php81";
     freescout_mysql_php82 = mkNode "mysql" "php82";
   };
@@ -106,13 +104,15 @@ in pkgs.nixosTest {
 
   start_all()
 
-  for machine in [freescout_pgsql_php80, freescout_pgsql_php81, freescout_pgsql_php82]:
+  for machine in [freescout_pgsql_php81, freescout_pgsql_php82]:
     machine.wait_for_unit("postgresql")
 
-  for machine in [freescout_mysql_php80, freescout_mysql_php81, freescout_mysql_php82]:
+  for machine in [freescout_mysql_php81, freescout_mysql_php82]:
     machine.wait_for_unit("mysql")
 
-  for machine in [freescout_pgsql_php80, freescout_pgsql_php81, freescout_pgsql_php82, freescout_mysql_php80, freescout_mysql_php81, freescout_mysql_php82]:
+  all=[freescout_pgsql_php81, freescout_pgsql_php82, freescout_mysql_php81, freescout_mysql_php82]
+
+  for machine in all:
     machine.wait_for_unit("nginx")
     machine.wait_for_unit("dovecot2")
     machine.wait_for_unit("mailhog")
@@ -144,9 +144,15 @@ in pkgs.nixosTest {
 
     with subtest("Send E-Mails"):
       machine.succeed("send-initial")
-      #machine.wait_until_fails("curl -sSf --cookie-jar cjar --cookie cjar 'http://${freescoutDomain}/mailbox/1' | grep 'There are no conversations here'", timeout=180)
+
+  # Doing a second loop so that we won't have to wait that much
+  for machine in all:
+    with subtest("E-Mails ae received"):
       machine.wait_until_succeeds("curl -sSf --cookie-jar cjar --cookie cjar 'http://${freescoutDomain}/mailbox/1' | grep 'Hello NixOS'", timeout=180)
       # Notifactions to users are being sent
+
+  for machine in all:
+    with subtest("Notifications are sent"):
       machine.wait_until_succeeds("test $(curl -sSf http://127.0.0.1:8025/api/v2/messages | jq '.total') -eq 1", timeout=180)
       machine.succeed("curl -sSf http://127.0.0.1:8025/api/v2/messages | jq '.items[].Content.Headers[\"X-FreeScout-Mail-Type\"] | .[0]'")
 

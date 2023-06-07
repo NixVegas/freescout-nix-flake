@@ -149,7 +149,7 @@ in {
       default = pkgs.php82;
       description = lib.mdDoc "The php package to use";
       defaultText = literalExpression "pkgs.php";
-      relatedPackages = [ "php80" "php81" "php82" ];
+      relatedPackages = [ "php81" "php82" ];
     };
 
     domain = mkOption {
