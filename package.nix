@@ -6,7 +6,7 @@
 stdenv.mkDerivation rec {
   preferLocalBuild = true;
   pname = "freescout";
-  version = "1.8.71";
+  version = "1.8.80";
 
   src = fetchFromGitHub {
     owner = "freescout-helpdesk";
