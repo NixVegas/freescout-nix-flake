@@ -149,7 +149,7 @@ in {
       default = pkgs.php82;
       description = lib.mdDoc "The php package to use";
       defaultText = literalExpression "pkgs.php";
-      relatedPackages = [ "php81" "php82" ];
+      relatedPackages = [ "php81" "php82" "php83" ];
     };
 
     domain = mkOption {
@@ -266,9 +266,7 @@ in {
       enable = true;
       ensureUsers = [{
         name = user;
-        ensurePermissions = {
-          "DATABASE \"${app_config.DB_DATABASE}\"" = "ALL PRIVILEGES";
-        };
+        ensureDBOwnership = true;
       }];
       ensureDatabases = [
         app_config.DB_DATABASE

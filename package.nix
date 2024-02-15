@@ -6,18 +6,17 @@
 stdenv.mkDerivation rec {
   preferLocalBuild = true;
   pname = "freescout";
-  version = "1.8.93";
+  version = "1.8.120";
 
   src = fetchFromGitHub {
     owner = "freescout-helpdesk";
     repo = pname;
     rev = version;
-    hash = "sha256-0GD6/Yg3iqzYB/kdDb4yfi+lH/yM0yBs+VcTIGum+Xk=";
+    hash = "sha256-eocdv7ILgwvnVUMZBxAsGkzr+TnyLgZOgeU2cONJgRY=";
   };
 
   patches = [
     ./0001-Fix-settings-page-error-due-to-unwritable-.env-file.patch
-    ./deprecated-var-usage.patch
   ];
 
   prePatch = ''
