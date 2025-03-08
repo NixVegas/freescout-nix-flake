@@ -97,9 +97,13 @@ in pkgs.nixosTest {
   nodes = {
     freescout_pgsql_php81 = mkNode "pgsql" "php81";
     freescout_pgsql_php82 = mkNode "pgsql" "php82";
+    freescout_pgsql_php83 = mkNode "pgsql" "php83";
+    freescout_pgsql_php84 = mkNode "pgsql" "php84";
 
     freescout_mysql_php81 = mkNode "mysql" "php81";
     freescout_mysql_php82 = mkNode "mysql" "php82";
+    freescout_mysql_php83 = mkNode "mysql" "php83";
+    freescout_mysql_php84 = mkNode "mysql" "php84";
   };
 
   testScript = ''
@@ -107,13 +111,13 @@ in pkgs.nixosTest {
 
   start_all()
 
-  for machine in [freescout_pgsql_php81, freescout_pgsql_php82]:
+  for machine in [freescout_pgsql_php81, freescout_pgsql_php82, freescout_pgsql_php83, freescout_pgsql_php84]:
     machine.wait_for_unit("postgresql")
 
-  for machine in [freescout_mysql_php81, freescout_mysql_php82]:
+  for machine in [freescout_mysql_php81, freescout_mysql_php82, freescout_mysql_php83, freescout_mysql_php84]:
     machine.wait_for_unit("mysql")
 
-  all=[freescout_pgsql_php81, freescout_pgsql_php82, freescout_mysql_php81, freescout_mysql_php82]
+  all=[freescout_pgsql_php81, freescout_pgsql_php82, freescout_pgsql_php83, freescout_pgsql_php84, freescout_mysql_php81, freescout_mysql_php82, freescout_mysql_php83, freescout_mysql_php84]
 
   for machine in all:
     machine.wait_for_unit("nginx")
