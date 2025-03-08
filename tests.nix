@@ -40,7 +40,10 @@ let
         127.0.0.1 ${mailDomain} ${freescoutDomain}
       '';
 
-      services.mailhog.enable = true;
+      services.mailhog = {
+        enable = true;
+        setSendmail = false;
+      };
 
       users.users.alice = {
         isNormalUser = true;
