@@ -6,13 +6,13 @@
 stdenv.mkDerivation rec {
   preferLocalBuild = true;
   pname = "freescout";
-  version = "1.8.139";
+  version = "1.8.173";
 
   src = fetchFromGitHub {
     owner = "freescout-helpdesk";
     repo = pname;
     rev = version;
-    hash = "sha256-v/bQuE1khKtAt2dc5Y83PhKTUj32His1SwRt3rkfBX4=";
+    hash = "sha256-knyv+1A/j4x2hW05G5aIjGVRMjPVf5BoQTCm8lPhpNA=";
   };
 
   patches = [
@@ -44,6 +44,9 @@ stdenv.mkDerivation rec {
   passthru.tests = {
     inherit (nixosTests) freescout;
   };
+
+  # Because freescout is searching for some folders only relative to it's own source location, we need to have the symlinks to the actual locations in here
+  dontCheckForBrokenSymlinks = true;
 
   meta = with lib; {
     description = "Free self-hosted help desk & shared mailbox";
