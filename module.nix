@@ -149,6 +149,7 @@ in {
       default = pkgs.php82;
       description = lib.mdDoc "The php package to use";
       defaultText = literalExpression "pkgs.php";
+      # php8.4 is not yet compatible: https://github.com/freescout-help-desk/freescout/issues/4630 (as of 2025-03-09)
       relatedPackages = [ "php81" "php82" "php83" ];
     };
 
