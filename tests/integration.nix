@@ -92,7 +92,7 @@ let
     };
   };
 in pkgs.nixosTest {
-  name = "freescout";
+  name = "freescout-integration";
 
   nodes = {
     freescout_pgsql_php81 = mkNode "pgsql" "php81";

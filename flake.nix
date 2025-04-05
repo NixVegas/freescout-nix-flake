@@ -33,8 +33,13 @@
       nixosModules.freescout = import ./module.nix;
       overlays.default = (final: prev: rec {
         freescout = final.callPackage ./package.nix {};
-        nixosTests.freescout = final.callPackage ./tests.nix {
-          outputs = self;
+        nixosTests.freescout = nixpkgs.lib.attrsets.recurseIntoAttrs {
+          integration = final.callPackage ./tests/integration.nix {
+            outputs = self;
+          };
+          upgrade = final.callPackage ./tests/upgrade.nix {
+            outputs = self;
+          };
         };
       });
     };

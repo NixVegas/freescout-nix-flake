@@ -110,7 +110,11 @@ let
     set -x
     umask 027
     # Working arround https://github.com/freescout-helpdesk/freescout/issues/2547
-    rm -f ${datadir}/bootstrap/cache.php ${datadir}/bootstrap/cache/config.php
+    # and having to manually clear cache when migrating from something around
+    # ~1.8.159 (╯°□°)╯︵ ┻━┻
+    # See: https://github.com/freescout-help-desk/freescout/issues/4366#issuecomment-2495993397
+    rm -f ${datadir}/bootstrap/cache.php ${datadir}/bootstrap/cache/{config,packages,services}.php
+
     ln -sf "${artisanWrapped}/bin/artisan" "${datadir}/artisan"
     ${concatMapStringsSep "\n" (p: "mkdir -p ${datadir}/${p}") rwPaths}
 
