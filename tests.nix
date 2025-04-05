@@ -98,16 +98,12 @@ in pkgs.nixosTest {
     freescout_pgsql_php81 = mkNode "pgsql" "php81";
     freescout_pgsql_php82 = mkNode "pgsql" "php82";
     freescout_pgsql_php83 = mkNode "pgsql" "php83";
-    # Not compatible with php8.4...
-    # https://github.com/freescout-help-desk/freescout/issues/4630
-    #freescout_pgsql_php84 = mkNode "pgsql" "php84";
+    freescout_pgsql_php84 = mkNode "pgsql" "php84";
 
     freescout_mysql_php81 = mkNode "mysql" "php81";
     freescout_mysql_php82 = mkNode "mysql" "php82";
     freescout_mysql_php83 = mkNode "mysql" "php83";
-    # Not compatible with php8.4...
-    # https://github.com/freescout-help-desk/freescout/issues/4630
-    #freescout_mysql_php84 = mkNode "mysql" "php84";
+    freescout_mysql_php84 = mkNode "mysql" "php84";
   };
 
   testScript = ''
