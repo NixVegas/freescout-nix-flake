@@ -228,7 +228,12 @@ in {
 
     # TODO: Implement (service dependencies, enable services, create database and user, add to config)
     databaseSetup = {
-      enable = mkEnableOption (lib.mdDoc "Automatic database setup and configuration");
+      enable = mkOption {
+        type = types.bool;
+        description = lib.mdDoc "Whether to enable automatic database setup and configuration";
+        default = true;
+      };
+
       kind = mkOption {
         type = types.enum [ "mysql" "pgsql" ];
         default = "pgsql";
