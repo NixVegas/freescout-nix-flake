@@ -30,7 +30,7 @@
         ];
       }).config.system.build.vm;
     })) // {
-      nixosModules.freescout = import ./module.nix;
+      nixosModules.freescout = import ./module.nix { inherit self; };
       overlays.default = (final: prev: rec {
         freescout = final.callPackage ./package.nix {};
         nixosTests.freescout = nixpkgs.lib.attrsets.recurseIntoAttrs {
