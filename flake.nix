@@ -21,7 +21,7 @@
     in rec {
       packages.freescout = pkgs.freescout;
       packages.default = packages.freescout;
-      packages.nixosTests.freescout = pkgs.nixosTests.freescout;
+      checks = removeAttrs pkgs.nixosTests.freescout [ "recurseForDerivations" ];
       packages.dev-vm = (nixpkgs.lib.nixosSystem {
         inherit system pkgs;
         modules = [
