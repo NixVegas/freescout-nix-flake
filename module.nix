@@ -107,6 +107,8 @@ let
       "bootstrap/cache"
       "public/css/builds"
       "public/js/builds"
+      "Modules"
+      "public/modules"
     ];
   in ''
     set -x
