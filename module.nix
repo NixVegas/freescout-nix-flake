@@ -261,7 +261,7 @@ in {
 
   config = mkIf cfg.enable {
     assertions = [{
-      assertion = (app_config ? "APP_KEY");
+      assertion = (app_config ? "APP_KEY" || app_config ? "APP_KEY_FILE");
       message = "`services.freescout.settings.APP_KEY` is required!";
     }];
 
