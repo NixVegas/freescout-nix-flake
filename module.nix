@@ -126,8 +126,8 @@ let
   '';
 
   # Helper functions
-  isSecret = v: isAttrs v && v ? _secret && (isString v._secret || builtins.isPath v._secret);
-  hashSecret = p: builtins.hashString "sha256" p;
+  isSecret = v: isAttrs v && v ? _secret && lib.strings.isConvertibleWithToString v._secret;
+  hashSecret = p: builtins.hashString "sha256" (toString p);
   # hasSecrets = (isList allSecrets && allSecrets != [ ]) or (allSecrets == null);
   dropNull = filterAttrsRecursive (
     n: v: ! elem v [ null [] {} ]

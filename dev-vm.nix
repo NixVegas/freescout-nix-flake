@@ -86,7 +86,7 @@ in {
     settings = {
       APP_ENV = "local";
       APP_DEBUG = true;
-      APP_KEY._secret = toString keyFile;
+      APP_KEY._secret = keyFile;
       APP_URL = "https://${domain}:${toString httpsPort}";
       APP_DISABLE_UPDATING = false;
     };
