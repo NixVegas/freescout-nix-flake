@@ -55,7 +55,7 @@ in {
   users.users.root.password = "root";
   services.openssh = {
     enable = true;
-    permitRootLogin = "yes";
+    settings.PermitRootLogin = "yes";
   };
 
   time.timeZone = "Europe/Berlin";
