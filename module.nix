@@ -154,7 +154,7 @@ in {
       # We build a package set here rather than using `pkgs` because we don't
       # want to assume `pkgs` has our overlay applied (and thus, it might not have
       # a `freescout` package).
-      freescout = self.packages.${pkgs.system}.default;
+      freescout = self.packages.${pkgs.stdenv.hostPlatform.system}.default;
     } "freescout" {};
 
     phpPackage = mkOption {
