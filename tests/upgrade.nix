@@ -19,7 +19,7 @@ let
     };
   });
   newFreescoutVersion = pkgs.freescout;
-in pkgs.nixosTest {
+in pkgs.testers.nixosTest {
   name = "freescout-upgrade";
 
   nodes.machine = { config, ... }: {
